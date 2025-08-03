@@ -1,0 +1,42 @@
+class Solution {
+  public:
+    vector<vector<int>> applyDiff2D(vector<vector<int>>& mat,
+                                    vector<vector<int>>& opr) {
+        // code here
+        int n = mat.size();
+        int m = mat[0].size();
+        
+        vector<vector<int>> diff(n,vector<int>(m,0));
+        
+        for(auto op : opr){
+            int v = op[0];
+            int r1 = op[1], c1 = op[2], r2 = op[3], c2 = op[4];
+            
+            
+            diff[r1][c1] += v; //top-left
+            if(c2 + 1 < m) diff[r1][c2 + 1] -= v; //top-right
+            if(r2 + 1 < n) diff[r2 + 1][c1] -= v; //bottom-left
+            if(r2 + 1 < n && c2 + 1 < m) diff[r2 + 1][c2 + 1] += v; //bottom-right
+        }
+        
+        for(int i = 0; i < n; i++){
+            for(int j = 1; j < m; j++){
+                diff[i][j] += diff[i][j - 1]; //row-wise sum
+            }
+        }
+            
+        for(int j = 0; j < m; j++){
+            for(int i = 1; i < n; i++){
+                diff[i][j] += diff[i - 1][j]; //col-wise sum
+            }
+        }
+        
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                mat[i][j] += diff[i][j]; //add the difference to the matrix
+            }
+        }
+        
+        return mat;
+    }
+};
